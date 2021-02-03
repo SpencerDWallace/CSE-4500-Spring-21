@@ -9,6 +9,7 @@ fetch('https://api.sunrise-sunset.org/json?lat=36.7201600&lng=-4.4203400&date=to
 function onRequest(request, response){
     response.writeHead(500, {'Content-Type': 'text/html'});
     response.write(JSON.stringify(sunrise));
+    console.log(JSON.stringify(sunrise));
     response.end();
 }
 
