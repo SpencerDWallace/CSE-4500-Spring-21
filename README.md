@@ -3,7 +3,7 @@ Core Assignments - 02/02/2021
 This folder contains core assignments 2 and 3
 
 Project Folder - 02/02/2021
-(I believe for it is dependent on local file paths to run at the moment)
+(I believe it is dependent on local file paths to run at the moment)
 Start of Project Assignment, getting used to some node js and javascript features, as well as html. No exact plan for what project I want to do yet. 
 - main.js sets up the port for a server and renders an ejs file as html to it
 - routes.js sets up the paths on the server and renders an ejs file for each path (just index.ejs and home.ejs for now)
