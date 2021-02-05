@@ -3,10 +3,13 @@ let x = 1535/2,y = 575/2, z = 50, floor = 544, count = 0, x2 = 0, y2 = 0, mouseW
 let xVelocity = 3, xRate;
 let yVelocity = 0, yCap = 25, moves = 50, rate, mX = null, mY = null, mXR = null, mYR = null;
 let fontsize = 80;
-
+let h1;
 function setup(){
     canvas = createCanvas(1535,575);
-textSize(80);
+    h1 = createElement('h1', 'Click and Drag the Mouse to Launch the Ball');
+    h1.position(400, 0);
+
+    textSize(80);
 }
 
 //physics for the circle, acceleration decreases each 'bounce'
@@ -48,14 +51,12 @@ function motion() {
         count++;
         yVelocity = -yVelocity;
         y = 545
-       // yCap += 50;
         moves = (floor - yCap)/yVelocity;
 
     }
     else if (y < yCap) {
         y = yCap + 1;
         yVelocity = -yVelocity;
-
     }
 }
 
@@ -98,6 +99,6 @@ function mouseReleased() {
 function drawWords(x) {
 
     fill(random(50,250),random(50,250),random(50,250));
-    text('BRRRRRRRRRRRRRRRRRRRRRRRR', x, 180);
+    text('ZOOOOOOOOOOOOOOOOOOOOOM', x, 180);
 
 }
