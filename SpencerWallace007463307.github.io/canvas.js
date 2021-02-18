@@ -61,8 +61,6 @@ function setup(){
 
     canvas = createCanvas(width1, height);
     canvas.position(0,0);
-
-
 }
 
 /*function detectMob() {
@@ -144,9 +142,6 @@ function joystickMovement(){
     if (pAngle < 0) {
         pAngle += 2 * PI;
     }
-
-
-
 }
 
 function joystickDetection(){
@@ -234,7 +229,6 @@ function drawRays() {
     let r, mx, my, mp, dof, rx, ry, ra, xOffset, yOffset, aTan, MS = floor(mapSize), numOfRays = 300;
     ra = pAngle - 0.45;
     let rr = 0.45;
-
 
     //for horizontal
     let disH = 10000, disV = 10000, distFinal, hx = px, vx = px, hy = py, vy = py;
