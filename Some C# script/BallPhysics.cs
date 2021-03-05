@@ -9,18 +9,16 @@ public class BallPhysics : MonoBehaviour
     Vector3 to;
     int n;
     float rad;
-    //new Camera camera;
+    
     // Start is called before the first frame update
     void Start()
     {
-        // camera = Camera;
-
+    
     }
 
     // Update is called once per frame
     void Update()
     {
-        //GameObject ball = GameObject.Find("Ball");
         playerAngle = transform.rotation.eulerAngles.y;
         Vec = transform.localPosition;
         if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
@@ -45,7 +43,6 @@ public class BallPhysics : MonoBehaviour
             to = new Vector3(0, playerAngle, 0);
             transform.eulerAngles = Vector3.Lerp(transform.rotation.eulerAngles, to, Time.deltaTime);
             transform.localPosition = Vec;
-            // GameObject.Find("Camera").transform.localPosition = new Vector3((float)Vec.x, (float)(Vec.y + 3), (float)(Vec.x -.5));
-        
+          
     }
 }
