@@ -7,7 +7,7 @@ public class FreighterBehavior : MonoBehaviour
     GameObject temp;
     Rigidbody direction;
     public GameObject explosion;
-    GameObject expolsionPrefab;
+    GameObject explosionPrefab;
    // float time;
     private void OnTriggerEnter(Collider col)
     {
@@ -20,7 +20,7 @@ public class FreighterBehavior : MonoBehaviour
             direction = col.GetComponent<Rigidbody>();
             direction.velocity = 0 * temp.transform.forward;
 
-            expolsionPrefab = Instantiate(explosion, temp.transform.position, temp.transform.rotation);
+            explosionPrefab = Instantiate(explosion, temp.transform.position, temp.transform.rotation);
             Debug.Log("Hit!");
         }
     }
