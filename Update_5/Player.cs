@@ -1,0 +1,272 @@
+﻿ using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+public class BallPhysics : MonoBehaviour
+{
+
+    
+    Vector3 Vec;
+    Rigidbody player;
+    float acc = 0; float xAcc, yAcc, zAcc; float accMax = 4;
+    float velo, xVelo, yVelo, zVelo;
+    float yAngle, xAngle, zAngle;
+    Vector3 to;
+    public Lasers[] lasers;
+    //HUD hud;
+    public GameObject zero; public GameObject one; public GameObject two; public GameObject three; public GameObject four; public GameObject five; public GameObject six; public GameObject seven; public GameObject eight; public GameObject nine; public GameObject ten;
+    int numOfLasers = 0, previousNumOfLasers = 0;
+    public GameObject RedLaser;
+    GameObject hud;
+    GameObject ammo;
+    int n; float camX = 0; float camY = 0; 
+    float rad; float width = Screen.width; float height = Screen.height; float screenW2; float screenH2; float mouseX; float mouseY;
+    bool moveRight; bool moveLeft; bool moveUp; bool moveDown; bool tiltRight; bool tiltLeft; bool ammoChanged = false;
+    public Camera cam;
+    //new Camera camera;
+
+    
+    // Start is called before the first frame update
+    void Start()
+    {
+        // camera = Camera;
+        player = GetComponent<Rigidbody>();
+        cam = GetComponentInChildren<Camera>();
+        lasers = new Lasers[10];
+        hud = GameObject.Find("HUD");
+        xAngle = transform.localEulerAngles.x;
+        yAngle = transform.localEulerAngles.y;
+        zAngle = transform.localEulerAngles.z;
+    }
+      
+    // Update is called once per frame
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.R)){
+            SceneManager.LoadScene("SampleScene");
+        }
+
+        movement();
+        rotateCamera();
+
+
+            if (Input.GetKeyDown(KeyCode.Space) && numOfLasers < 10)
+            {
+                fire();
+                ammoChanged = true;
+            }
+
+        for (int s = 0; s < numOfLasers; s++)
+        {
+            int t = lasers[s].getTime();
+            if (t >= 4)
+            {
+                lasers[s].destroyLaser(ref numOfLasers);
+                lasers[s] = lasers[numOfLasers];
+                lasers[numOfLasers] = null;
+                ammoChanged = true;
+            }
+            else
+            {
+                lasers[s].laserMovement();
+            }
+        }
+
+        if (ammoChanged || numOfLasers == 0)
+        {
+            
+            updateAmmo(numOfLasers);
+            ammoChanged = false;
+        }
+        
+    }
+
+    public void updateAmmo(int remainingAmmo)
+    {
+        //if(remainingAmmo == 0 && remainingAmmo != previousNumOfLasers)
+        //  UnityEngine.Object.Destroy(ammo);
+        if (remainingAmmo != previousNumOfLasers)
+        {
+            UnityEngine.Object.Destroy(ammo);
+            ammo = null;
+        }
+        previousNumOfLasers = remainingAmmo;
+        remainingAmmo = 10 - remainingAmmo;
+        if(ammo == null)
+        {
+            switch (remainingAmmo)
+            {
+                case 0: ammo = GameObject.Instantiate(zero) as GameObject; break;
+                case 1: ammo = GameObject.Instantiate(one) as GameObject; break;
+                case 2: ammo = GameObject.Instantiate(two) as GameObject; break;
+                case 3: ammo = GameObject.Instantiate(three) as GameObject; break;
+                case 4: ammo = GameObject.Instantiate(four) as GameObject; break;
+                case 5: ammo = GameObject.Instantiate(five) as GameObject; break;
+                case 6: ammo = GameObject.Instantiate(six) as GameObject; break;
+                case 7: ammo = GameObject.Instantiate(seven) as GameObject; break;
+                case 8: ammo = GameObject.Instantiate(eight) as GameObject; break;
+                case 9: ammo = GameObject.Instantiate(nine) as GameObject; break;
+                case 10: ammo = GameObject.Instantiate(ten) as GameObject; break;
+                default: break;
+            }
+        }
+        ammo.transform.SetParent(hud.transform, false);
+        
+    }
+
+    void fire()
+    {
+        Vector3 missle = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+        Quaternion mAngle = Quaternion.Euler(transform.localEulerAngles);
+        mAngle.x += 90;
+
+        GameObject m = Instantiate(RedLaser, missle, mAngle);
+        
+        Vector3 laserAngle = new Vector3(transform.localRotation.eulerAngles.x, transform.localRotation.eulerAngles.y, transform.localRotation.eulerAngles.z);
+        //Debug.Log("angle x is: " + laserAngle.x + "  angle y is: " + laserAngle.y + " angle z is:" + laserAngle.z);
+        
+        lasers[numOfLasers] = new Lasers(m, 0F, (velo + 60F), missle, laserAngle);
+        numOfLasers++;
+    }
+ 
+    void movement()
+    {
+        height = Screen.height;
+        width = Screen.width;
+        moveRight = moveLeft = moveUp = moveDown = tiltRight = tiltLeft = false;
+        screenH2 = height / 2;
+        screenW2 = width / 2;
+        mouseX = Input.mousePosition.x;
+        mouseY = Input.mousePosition.y;
+        Vec = transform.localPosition;
+
+        // adjusting xAngle
+        if (mouseY > screenH2 && mouseY < height)
+        {
+            xAngle = Mathf.Pow((((mouseY - screenH2) / screenH2) * -1),2) * -1;
+            moveUp = true;
+        }
+        else if (mouseY < screenH2 && mouseY > 0)
+        {
+            xAngle = Mathf.Pow(((1 - (mouseY / screenH2)) * 1),2);
+            moveDown = true;
+        }
+        // adjusting zAngle
+        if (Input.GetKey(KeyCode.D))
+        {
+            tiltRight = true;
+            zAngle = -1;
+        }
+        if (Input.GetKey(KeyCode.A))
+        {
+            tiltLeft = true;
+            zAngle = 1;
+        }
+        // adjusting yAngle
+        if (mouseX > screenW2 && mouseX < width)
+        {
+            yAngle = (((mouseX - screenW2) / screenW2) * 1);
+            moveRight = true;
+        }
+        else if (mouseX < screenW2 && mouseX > 0)
+        {
+            moveLeft = true;
+            yAngle = (1 - (mouseX / screenW2)) * -1;
+        }
+        rad = Mathf.Deg2Rad * transform.localEulerAngles.y;
+        // moving the object
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
+        {
+
+            if (acc < 0) acc = 0;
+            acc += 0.8f * Time.deltaTime;
+            if (acc > accMax)
+                {
+                    acc = accMax;
+                }
+                velo += acc;
+            if (velo > 50)
+                velo = 50;
+                
+            
+        }
+        else if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
+        {
+            if (acc > 0)
+                acc = 0;
+                acc -= 10 * Time.deltaTime;
+            if (acc < -50*Time.deltaTime)
+            {
+                acc = -50*Time.deltaTime;
+            }
+            velo += acc;
+            if (velo < 0)
+                velo = 0;
+         
+
+        }
+
+        zVelo = velo * Mathf.Cos(rad);
+        xVelo = Mathf.Sin(rad) * velo;
+        yVelo = Mathf.Sin(Mathf.Deg2Rad * transform.localEulerAngles.x) * -velo;
+
+       player.velocity = velo*transform.forward;
+       // Vec.x += xVelo*Time.deltaTime;
+       // Vec.y += yVelo*Time.deltaTime;
+
+       // Debug.Log(transform.localEulerAngles.y + "   "   + velo);
+        
+            // translating the adjustments to the object local transform rotation
+        to = new Vector3(xAngle, yAngle, zAngle);
+        transform.Rotate(to, Space.Self);// Vector3.Lerp(transform.rotation.eulerAngles, to, Time.deltaTime);
+        //transform.localPosition = Vec;
+        yAngle = 0; zAngle = 0; xAngle = 0;
+    }
+
+    void rotateCamera()
+    {
+        Vec.x = 0;//2;// transform.localPosition.x;
+        Vec.y = 2;
+        //  Vec.z = 3;
+        if (!moveLeft && !moveRight && !moveUp && !moveDown && !tiltLeft && !tiltRight)
+        {
+            camY = 0;
+            cam.transform.rotation = Quaternion.Euler(transform.localEulerAngles.x, transform.localEulerAngles.y, transform.localEulerAngles.z);
+        }
+        else
+        {
+            if (moveRight)
+            {
+                Vec.x += (((mouseX - screenW2) / screenW2) * 6);
+                camY = (((mouseX - screenW2) / screenW2) * 6);
+            }
+            else if (moveLeft)
+            {
+                Vec.x += (1 - (mouseX / screenW2)) * -6;
+                camY = (1 - (mouseX / screenW2)) * -6;
+            }
+
+            if (moveDown)
+            {
+                Vec.y += Mathf.Pow((1 - (mouseY / screenH2)), 2) * 5;
+                camX = Mathf.Pow((1 - (mouseY / screenH2)), 2) * -5;
+            }
+            else if (moveUp)
+            {
+                Vec.y += Mathf.Pow(((mouseY - screenH2) / screenH2), 2) * -5;
+                camX = Mathf.Pow(((mouseY - screenH2) / screenH2), 2) * 5;
+            }
+           // if ((Mathf.Deg2Rad * transform.eulerAngles.x) >= 3.1415 / 2 && (Mathf.Deg2Rad * transform.localEulerAngles.x) < 3.1415)
+             //   Vec.y *= -1;
+            //Vec.x = Vec.x* Mathf.Sin(Mathf.Deg2Rad * transform.localEulerAngles.z);
+            
+           // Vec.y = Vec.y * Mathf.Sin(Mathf.Deg2Rad * transform.rotation.x);
+
+            Vec.z = cam.transform.localPosition.z;
+            Quaternion to = Quaternion.Euler(transform.localEulerAngles.x + camX + 6, transform.localEulerAngles.y + camY, transform.localEulerAngles.z);
+           // cam.transform.rotation = to;
+            cam.transform.localPosition = Vec;
+        }
+    }
+}
