@@ -62,28 +62,6 @@ public class flockAI : MonoBehaviour
     private void AI()
     {
 
-        /* if (swarming)
-         {
-             Debug.Log("SWARMING");
-
-             if (velocity < 25)
-                 velocity += 5 * Time.deltaTime;
-             direction.velocity = velocity * transform.forward;
-             Quaternion rotation = Quaternion.LookRotation(relativePos, Vector3.up);
-             transform.rotation = Quaternion.RotateTowards(transform.rotation, rotation, Time.deltaTime * 360);
-             if (Vector3.Distance(transform.position, freighter.transform.position) < 30F)
-             {
-                 relativePos = relativePos + new Vector3(Random.Range(-45F, 45F), Random.Range(45F, 60F), Random.Range(25F, 45F));
-                 leaving = true;
-                 swarming = false;
-             }
-             else if (Vector3.Distance(transform.position, freighter.transform.position) > 75F)
-             {
-                 swarming = false;
-                 turnAround = true;
-             }
-         }
-         */
         if (swarming)
         {
             var dir = (freighter.transform.position - transform.position).normalized;
@@ -102,12 +80,7 @@ public class flockAI : MonoBehaviour
                     //Debug.Log("Hit!");
                     if (hit.collider.gameObject.tag == "Freighter")
                     {
-                        /*   float t = 2.0f;
-                           if (avoid == Direction.DOWN)
-                               transform.Rotate(t, 0.0f, 0.0f, Space.Self);
-                           if (avoid == Direction.UP)
-                               transform.Rotate(-1 * t, 0.0f, 0.0f, Space.Self);
-                               */
+                       
                         relativePos = transform.forward * -400;// = player.transform.position - transform.position;
                         detected = true;
                     }
